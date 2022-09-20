@@ -22,3 +22,5 @@ CMD serve -s wtfos_config_compiled
 # save this as Dockerfile in a empty dir, run following commands.
 # docker build -t wtfos_config .
 # docker container run --name wtfos_config -d -it -p 3000:3000 wtfos_config
+
+# once complete, open http://localhost:3000 in your browser of choice
