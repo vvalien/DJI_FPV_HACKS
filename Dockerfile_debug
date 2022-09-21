@@ -1,0 +1,33 @@
+# docker build -t wtfos_debug
+# docker container run --name=wtfos_debug -d -it -v //c/Utiles/wtfos_debug/dji_libs:/wtfos/dji_libs wtfos_debug bash
+# docker container attach wtfos_debug
+
+
+
+FROM node:lts-buster
+
+# the args that are used in our script
+ARG NDK_VERSION=23
+ARG BASE_PATH=/wtfos
+
+# make our basepath
+RUN mkdir $BASE_PATH
+
+# get required packages
+RUN apt-get update && apt-get -y install nmap curl wget unzip git
+
+# download and unpack android NDK .. this is for compiling packages like msp-osd :)
+RUN wget https://dl.google.com/android/repository/android-ndk-r$NDK_VERSION-linux.zip -O /tmp/ndk.zip \
+    && mkdir $BASE_PATH/ndk \
+    && unzip -q -d $BASE_PATH/ndk /tmp/ndk.zip \
+    && rm /tmp/ndk.zip
+
+# set env for android SDK
+ENV ANDROID_NDK=$BASE_PATH/ndk/android-ndk-r$NDK_VERSION
+ENV ANDROID_NDK_HOME=$BASE_PATH/ndk/android-ndk-r$NDK_VERSION
+ENV PATH=${PATH}:${ANDROID_NDK}
+
+
+# get msp-osd
+RUN cd $BASE_PATH && git clone https://github.com/fpv-wtf/msp-osd.git
+ENV DJI_LIB_PATH=/wtfos/dji_libs/system/lib
